@@ -12,7 +12,7 @@ export const shopConfig = {
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "5490000000000",
   /** El mismo número, formateado para mostrar. */
   phoneDisplay: "+54 9 11 0000-0000",
-  instagram: process.env.NEXT_PUBLIC_INSTAGRAM ?? "afrikisima",
+  instagram: process.env.NEXT_PUBLIC_INSTAGRAM ?? "afrikisima_",
   tiktok: process.env.NEXT_PUBLIC_TIKTOK ?? "afrikisima",
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hola@ejemplo.com",
   currency: "ARS",

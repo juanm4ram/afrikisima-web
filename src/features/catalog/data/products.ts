@@ -39,19 +39,18 @@ export const products: Product[] = [
       "Diseño a medida: temática, colores y mensaje. Nos escribís la idea y la cotizamos juntos.",
     categoryId: "personalizadas",
     image: "/products/personalizada.webp",
-    gallery: ["/products/personalizada.webp", "/products/personalizada-2.webp"],
     tags: ["A pedido"],
     sizes: cakeSizes(45000, 68000),
   },
   {
-    id: "sorpresa",
-    slug: "torta-sorpresa",
-    name: "Torta Sorpresa",
+    id: "burn-away",
+    slug: "burn-away-cake",
+    name: "Burn Away Cake",
     description:
       "Lleva una lámina de papel de arroz comestible sobre la cobertura: se quema la imagen de encima y debajo aparece la sorpresa escondida. Bizcochos y rellenos a elección.",
     categoryId: "personalizadas",
-    image: "/products/sorpresa.webp",
-    gallery: ["/products/sorpresa.webp", "/products/sorpresa-2.webp"],
+    image: "/products/burn-away.webp",
+    gallery: ["/products/burn-away.webp", "/products/burn-away-2.webp"],
     tags: ["Novedad"],
     sizes: cakeSizes(45000, 68000),
   },
@@ -78,6 +77,16 @@ export const products: Product[] = [
     sizes: cakeSizes(38000, 58000),
   },
   {
+    id: "fondant",
+    slug: "torta-fondant",
+    name: "Torta Fondant",
+    description:
+      "Cobertura de fondant lisa, con apliques y figuras modeladas a mano según la temática. Bizcochos y rellenos a elección.",
+    categoryId: "personalizadas",
+    image: "/products/fondant.webp",
+    sizes: cakeSizes(45000, 68000),
+  },
+  {
     id: "chaja",
     slug: "torta-chaja",
     name: "Torta Chajá",
@@ -96,8 +105,12 @@ export const products: Product[] = [
     description:
       "Capas de bizcocho embebido en café, crema de mascarpone y cacao amargo espolvoreado.",
     categoryId: "clasicas",
-    image: "/products/tiramisu.webp",
-    gallery: ["/products/tiramisu.webp", "/products/tiramisu-2.webp"],
+    image: "/products/tiramisu-3.webp",
+    gallery: [
+      "/products/tiramisu-3.webp",
+      "/products/tiramisu.webp",
+      "/products/tiramisu-2.webp",
+    ],
     sizes: cakeSizes(33000, 50000),
   },
   {
@@ -136,8 +149,8 @@ export const products: Product[] = [
     description:
       "Masa sablée, crema de limón bien cítrico y merengue italiano flameado a mano.",
     categoryId: "tartas",
-    image: "/products/lemon-pie-2.webp",
-    gallery: ["/products/lemon-pie-2.webp", "/products/lemon-pie.webp"],
+    image: "/products/lemon-pie.webp",
+    gallery: ["/products/lemon-pie.webp", "/products/lemon-pie-2.webp"],
     sizes: cakeSizes(29000, 44000),
   },
   {
