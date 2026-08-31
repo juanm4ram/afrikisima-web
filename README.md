@@ -79,10 +79,14 @@ src/
 │
 └─ styles/globals.css         tema pastel (tokens de color, tipografías)
 
-public/
+public/                        estáticos que sirve la web
 ├─ brand/                     logo.svg · logo.png · logo-white.png
 ├─ backgrounds/hero.webp      imagen de portada
-└─ products/                  fotos de los productos (.webp)
+└─ products/                  fotos de los productos (.webp optimizado)
+
+assets/                        materiales fuente, NO se sirven (ver assets/README.md)
+├─ brand/                     logo original y variantes
+└─ photos/                    fotos originales de cámara (.heic) — fuera de git
 ```
 
 Convenciones:
