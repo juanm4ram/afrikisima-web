@@ -20,6 +20,9 @@
 # production
 /build
 
+# assets fuente (originales de camara, ~50MB: ver assets/README.md)
+/assets/photos/
+
 # misc
 .DS_Store
 *.pem
