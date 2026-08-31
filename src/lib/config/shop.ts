@@ -14,7 +14,7 @@ export const shopConfig = {
   phoneDisplay: "+54 9 11 5837-7972",
   instagram: process.env.NEXT_PUBLIC_INSTAGRAM ?? "afrikisima",
   tiktok: process.env.NEXT_PUBLIC_TIKTOK ?? "afrikisima",
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "afrikisina@gmail.com",
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "afrikisima@gmail.com",
   currency: "ARS",
   currencySymbol: "$",
   /** Días mínimos de anticipación para encargar. */

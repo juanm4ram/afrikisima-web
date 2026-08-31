@@ -39,13 +39,20 @@ export const products: Product[] = [
       "Diseño a medida: temática, colores y mensaje. Nos escribís la idea y la cotizamos juntos.",
     categoryId: "personalizadas",
     image: "/products/personalizada.webp",
-    gallery: [
-      "/products/personalizada.webp",
-      "/products/personalizada-2.webp",
-      "/products/personalizada-3.webp",
-      "/products/personalizada-4.webp",
-    ],
+    gallery: ["/products/personalizada.webp", "/products/personalizada-2.webp"],
     tags: ["A pedido"],
+    sizes: cakeSizes(45000, 68000),
+  },
+  {
+    id: "sorpresa",
+    slug: "torta-sorpresa",
+    name: "Torta Sorpresa",
+    description:
+      "Lleva una lámina de papel de arroz comestible sobre la cobertura: se quema la imagen de encima y debajo aparece la sorpresa escondida. Bizcochos y rellenos a elección.",
+    categoryId: "personalizadas",
+    image: "/products/sorpresa.webp",
+    gallery: ["/products/sorpresa.webp", "/products/sorpresa-2.webp"],
+    tags: ["Novedad"],
     sizes: cakeSizes(45000, 68000),
   },
   {
