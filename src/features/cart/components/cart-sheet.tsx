@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -45,6 +45,7 @@ export function CartSheet() {
   const [date, setDate] = useState(minDate());
   const [notes, setNotes] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [showDeliveryNotes, setShowDeliveryNotes] = useState(false);
 
   const handleCheckout = async () => {
     if (!name.trim()) {
@@ -100,7 +101,7 @@ export function CartSheet() {
         ``,
         `Total: ${formatPrice(order.total)}`,
         `Entrega: ${fulfillmentLabel}`,
-        `Fecha deseada: ${order.date ?? "a coordinar"}`,
+        `Fecha de entrega: ${order.date ?? "a coordinar"}`,
         `Nombre: ${order.customer.name}`,
         order.customer.phone ? `Teléfono: ${order.customer.phone}` : "",
         order.customer.notes ? `Notas: ${order.customer.notes}` : "",
@@ -230,22 +231,46 @@ export function CartSheet() {
                   id="cart-phone"
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
-                  placeholder="291 ..."
+                  placeholder="11 ..."
                   className="rounded-xl bg-background"
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="cart-date" className="eyebrow">Fecha</Label>
+              <div className="col-span-2 space-y-1.5">
+                <Label htmlFor="cart-date" className="eyebrow">
+                  Fecha de Entrega
+                </Label>
                 <Input
                   id="cart-date"
                   type="date"
                   min={minDate()}
                   value={date}
+                  onFocus={() => setShowDeliveryNotes(true)}
+                  onClick={() => setShowDeliveryNotes(true)}
                   onChange={(event) => setDate(event.target.value)}
                   className="rounded-xl bg-background"
                 />
+                {showDeliveryNotes && (
+                  <div className="relative rounded-xl border border-border bg-secondary/60 p-3 pr-8 text-xs leading-relaxed text-secondary-foreground">
+                    <button
+                      type="button"
+                      onClick={() => setShowDeliveryNotes(false)}
+                      aria-label="Cerrar aclaraciones"
+                      className="absolute right-2 top-2 text-secondary-foreground/60 transition-colors hover:text-secondary-foreground"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                    <ul className="space-y-1.5">
+                      {shopConfig.deliveryNotes.map((note) => (
+                        <li key={note} className="flex gap-1.5">
+                          <span aria-hidden>–</span>
+                          <span>{note}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-              <div className="space-y-1.5">
+              <div className="col-span-2 space-y-1.5">
                 <Label htmlFor="cart-fulfillment" className="eyebrow">Entrega</Label>
                 <select
                   id="cart-fulfillment"
