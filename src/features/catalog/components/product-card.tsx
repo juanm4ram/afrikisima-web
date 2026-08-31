@@ -15,7 +15,7 @@ export function ProductCard({ product, onSelect }: ProductCardProps) {
   const from = Math.min(...product.sizes.map((size) => size.price));
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-3xl border border-border/70 bg-card shadow-[0_1px_2px_rgba(74,43,51,0.04)] transition-shadow hover:shadow-[0_12px_32px_rgba(74,43,51,0.10)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border/70 bg-card shadow-[0_1px_2px_rgba(74,43,51,0.04)] transition-shadow hover:shadow-[0_12px_32px_rgba(74,43,51,0.10)]">
       <button
         type="button"
         onClick={() => onSelect(product)}

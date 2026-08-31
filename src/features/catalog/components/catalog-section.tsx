@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import { ProductCard } from "./product-card";
+import { ProductCarousel } from "./product-carousel";
 import { ProductDialog } from "./product-dialog";
 import { categories, products } from "@/features/catalog/data/products";
 import type { Product } from "@/features/catalog/types";
@@ -62,15 +62,7 @@ export function CatalogSection() {
               </span>
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {category.items.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onSelect={setSelected}
-                />
-              ))}
-            </div>
+            <ProductCarousel items={category.items} onSelect={setSelected} />
           </div>
         ))}
       </div>
