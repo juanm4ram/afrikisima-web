@@ -5,16 +5,13 @@
  * editar este archivo para actualizar la carta.
  */
 
-import type {
-  Category,
-  Product,
-  ProductSize,
-} from "../types";
+import type { Category, Product, ProductSize } from "../types";
 
+/** El orden de este array es el orden en la página y en el menú. */
 export const categories: Category[] = [
-  { id: "clasicas", name: "Clásicas" },
-  { id: "tartas", name: "Tartas y pies" },
-  { id: "diseno", name: "Tortas de diseño" },
+  { id: "personalizadas", name: "Tortas Personalizadas" },
+  { id: "clasicas", name: "Tortas Clásicas" },
+  { id: "tartas", name: "Tartas" },
   { id: "cookies", name: "Cookies" },
 ];
 
@@ -35,16 +32,85 @@ const cakeSizes = (mediano: number, grande: number): ProductSize[] => [
 
 export const products: Product[] = [
   {
+    id: "personalizada",
+    slug: "torta-personalizada",
+    name: "Torta Personalizada",
+    description:
+      "Diseño a medida: temática, colores y mensaje. Nos escribís la idea y la cotizamos juntos.",
+    categoryId: "personalizadas",
+    image: "/products/personalizada.webp",
+    gallery: [
+      "/products/personalizada.webp",
+      "/products/personalizada-2.webp",
+      "/products/personalizada-3.webp",
+      "/products/personalizada-4.webp",
+    ],
+    tags: ["A pedido"],
+    sizes: cakeSizes(45000, 68000),
+  },
+  {
+    id: "glitter",
+    slug: "glitter-cake",
+    name: "Glitter Cake",
+    description:
+      "Bizcochos y rellenos a elección. Ejemplo: bizcochos de vainilla con relleno de duraznos con crema.",
+    categoryId: "personalizadas",
+    image: "/products/glitter-cake.webp",
+    gallery: ["/products/glitter-cake.webp", "/products/glitter-cake-2.webp"],
+    tags: ["Personalizable"],
+    sizes: cakeSizes(42000, 62000),
+  },
+  {
+    id: "vintage",
+    slug: "torta-vintage",
+    name: "Torta Vintage",
+    description:
+      "Bizcocho y rellenos a elección. Ejemplo: bizcocho de caramelo y relleno de ganache de caramelo.",
+    categoryId: "personalizadas",
+    image: "/products/vintage.webp",
+    sizes: cakeSizes(38000, 58000),
+  },
+  {
     id: "chaja",
     slug: "torta-chaja",
     name: "Torta Chajá",
     description:
-      "Bizcochuelo húmedo, crema chantilly, duraznos en almíbar y merengue seco. La más pedida de la casa.",
+      "Bizcochuelo húmedo, crema chantilly, duraznos en almíbar y merengue seco.",
     categoryId: "clasicas",
     image: "/products/chaja.webp",
     gallery: ["/products/chaja.webp", "/products/chaja-2.webp"],
     tags: ["Más vendida"],
     sizes: cakeSizes(34000, 52000),
+  },
+  {
+    id: "tiramisu",
+    slug: "tiramisu",
+    name: "Tiramisú",
+    description:
+      "Capas de bizcocho embebido en café, crema de mascarpone y cacao amargo espolvoreado.",
+    categoryId: "clasicas",
+    image: "/products/tiramisu.webp",
+    gallery: ["/products/tiramisu.webp", "/products/tiramisu-2.webp"],
+    sizes: cakeSizes(33000, 50000),
+  },
+  {
+    id: "carrot-cake",
+    slug: "carrot-cake",
+    name: "Carrot Cake",
+    description: "Bizcocho de zanahoria con frosting de queso crema.",
+    categoryId: "clasicas",
+    image: "/products/carrot-cake.webp",
+    sizes: cakeSizes(30000, 46000),
+  },
+  {
+    id: "ricota",
+    slug: "torta-de-ricota",
+    name: "Torta de Ricota",
+    description: "Clásica torta de ricota con limón.",
+    categoryId: "clasicas",
+    image: "/products/ricota.webp",
+    gallery: ["/products/ricota.webp", "/products/ricota-2.webp"],
+    sizes: cakeSizes(28000, 42000),
   },
   {
     id: "cheesecake-ny",
@@ -61,112 +127,29 @@ export const products: Product[] = [
     slug: "lemon-pie",
     name: "Lemon Pie",
     description:
-      "Masa sablée, curd de limón bien cítrico y merengue italiano flameado a mano.",
+      "Masa sablée, crema de limón bien cítrico y merengue italiano flameado a mano.",
     categoryId: "tartas",
     image: "/products/lemon-pie-2.webp",
-    gallery: [
-      "/products/lemon-pie-2.webp",
-      "/products/lemon-pie.webp",
-    ],
+    gallery: ["/products/lemon-pie-2.webp", "/products/lemon-pie.webp"],
     sizes: cakeSizes(29000, 44000),
-  },
-  {
-    id: "tiramisu",
-    slug: "tiramisu",
-    name: "Tiramisú",
-    description:
-      "Capas de bizcocho embebido en café, crema de mascarpone y cacao amargo espolvoreado.",
-    categoryId: "clasicas",
-    image: "/products/tiramisu.webp",
-    gallery: [
-      "/products/tiramisu.webp",
-      "/products/tiramisu-2.webp",
-    ],
-    sizes: cakeSizes(33000, 50000),
-  },
-  {
-    id: "carrot-cake",
-    slug: "carrot-cake",
-    name: "Carrot Cake",
-    description:
-      "Bizcocho especiado de zanahoria y nueces con frosting de queso crema y crocante de nuez.",
-    categoryId: "clasicas",
-    image: "/products/carrot-cake.webp",
-    sizes: cakeSizes(30000, 46000),
-  },
-  {
-    id: "ricota",
-    slug: "torta-de-ricota",
-    name: "Torta de Ricota",
-    description:
-      "Receta de la abuela: masa quebrada, ricota batida con vainilla y azúcar impalpable.",
-    categoryId: "clasicas",
-    image: "/products/ricota.webp",
-    gallery: [
-      "/products/ricota.webp",
-      "/products/ricota-2.webp",
-    ],
-    sizes: cakeSizes(28000, 42000),
   },
   {
     id: "frutilla",
     slug: "tarta-de-frutilla",
     name: "Tarta de Frutilla",
     description:
-      "Masa dulce, crema pastelera de vainilla y frutillas frescas glaseadas. Sujeta a temporada.",
+      "Masa dulce, crema pastelera de vainilla y frutillas frescas. Sujeta a temporada.",
     categoryId: "tartas",
     image: "/products/frutilla.webp",
     tags: ["De temporada"],
     sizes: cakeSizes(35000, 54000),
   },
   {
-    id: "vintage",
-    slug: "torta-vintage",
-    name: "Torta Vintage de Chocolate",
-    description:
-      "Bizcocho de chocolate, ganache sedosa y decoración vintage con boquilla a pedido.",
-    categoryId: "diseno",
-    image: "/products/vintage.webp",
-    sizes: cakeSizes(38000, 58000),
-  },
-  {
-    id: "glitter",
-    slug: "glitter-cake",
-    name: "Glitter Cake",
-    description:
-      "Buttercream en tono pastel a elección, detalles comestibles con glitter y topper incluido.",
-    categoryId: "diseno",
-    image: "/products/glitter-cake.webp",
-    gallery: [
-      "/products/glitter-cake.webp",
-      "/products/glitter-cake-2.webp",
-    ],
-    tags: ["Personalizable"],
-    sizes: cakeSizes(42000, 62000),
-  },
-  {
-    id: "personalizada",
-    slug: "torta-personalizada",
-    name: "Torta Personalizada",
-    description:
-      "Diseño a medida: temática, colores y mensaje. Nos escribís la idea y la cotizamos juntos.",
-    categoryId: "diseno",
-    image: "/products/personalizada.webp",
-    gallery: [
-      "/products/personalizada.webp",
-      "/products/personalizada-2.webp",
-      "/products/personalizada-3.webp",
-      "/products/personalizada-4.webp",
-    ],
-    tags: ["A pedido"],
-    sizes: cakeSizes(45000, 68000),
-  },
-  {
     id: "cookies",
     slug: "cookies",
     name: "Cookies con Chocolate",
     description:
-      "Cookies de masa madre de manteca con chunks de chocolate semiamargo. Crocantes por fuera, tiernas adentro.",
+      "Cookies de azúcar mascabo con chocolate semiamargo. Crocantes por fuera, tiernas adentro.",
     categoryId: "cookies",
     image: "/products/cookies.webp",
     tags: ["Listas para llevar"],

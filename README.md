@@ -38,11 +38,11 @@ funcione: sin variables usa los valores por defecto y el catálogo local.
 | --- | --- |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número que recibe los pedidos. Formato internacional sin `+` (ej. `5492915551234`). |
 | `NEXT_PUBLIC_INSTAGRAM` | Usuario de Instagram del pie de página. |
+| `NEXT_PUBLIC_TIKTOK` | Usuario de TikTok del pie de página. |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | Mail de contacto. |
 | `NEXT_PUBLIC_SITE_URL` | URL pública, para la preview al compartir el link. |
 
-> ⚠️ Antes de publicar, cambiar `NEXT_PUBLIC_WHATSAPP_NUMBER`: el valor por
-> defecto es un número de ejemplo. **Los precios también son ficticios.**
+> ⚠️ **Los precios son de referencia**, todavía no son los definitivos.
 
 ---
 
@@ -112,8 +112,8 @@ Todo en **`src/features/catalog/data/products.ts`**:
 Para sumar un producto: copiar la foto en `public/products/` (idealmente `.webp`
 cuadrada de ~1400 px) y agregar la entrada.
 
-Los datos del negocio (horarios, dirección, días de anticipación) están en
-**`src/lib/config/shop.ts`**.
+Los datos del negocio (contacto, dirección, días de anticipación y las
+aclaraciones de entrega) están en **`src/lib/config/shop.ts`**.
 
 ---
 
