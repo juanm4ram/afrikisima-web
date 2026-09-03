@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/brand/logo.svg" alt="Afrikísima" width="380">
+  <img src="docs/logo.png" alt="Afrikísima" width="380">
 
   <p><strong>Tienda web de la pastelería Afrikísima</strong><br>
   Catálogo de tortas con selección de tamaño y pedidos por WhatsApp.</p>
@@ -11,6 +11,8 @@
     <img alt="Tailwind CSS 4" src="https://img.shields.io/badge/Tailwind-4-38BDF8?logo=tailwindcss&logoColor=white">
     <img alt="Licencia MIT" src="https://img.shields.io/badge/licencia-MIT-A4294C">
   </p>
+
+  <p><strong>Español</strong> · <a href="README.en.md">English</a></p>
 </div>
 
 ---
@@ -71,6 +73,7 @@ Requiere Node.js 20 o superior.
 git clone https://github.com/juanm4ram/afrikisima-web.git
 cd afrikisima-web
 npm install
+cp .env.example .env.local   # completar el contacto
 npm run dev
 ```
 
@@ -88,18 +91,22 @@ Abrir <http://localhost:3000>.
 
 ## Configuración
 
-Copiar `.env.example` a `.env.local`. **Ninguna variable es obligatoria**: sin
-ellas se usan los valores de `src/lib/config/shop.ts`.
+Los datos de contacto **no están en el código**: se cargan por variables de
+entorno, así el repositorio público no expone el WhatsApp ni el mail del negocio.
 
-| Variable | Para qué sirve |
-| --- | --- |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número que recibe los pedidos, formato internacional sin `+` |
-| `NEXT_PUBLIC_INSTAGRAM` | Usuario de Instagram del pie de página |
-| `NEXT_PUBLIC_TIKTOK` | Usuario de TikTok del pie de página |
-| `NEXT_PUBLIC_CONTACT_EMAIL` | Mail de contacto |
-| `NEXT_PUBLIC_SITE_URL` | URL pública, para la preview al compartir el link |
+| Variable | Obligatoria | Para qué sirve |
+| --- | :--: | --- |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | sí | Número que recibe los pedidos, formato internacional sin `+` |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | sí | Mail de contacto del pie de página |
+| `NEXT_PUBLIC_INSTAGRAM` | no | Usuario de Instagram |
+| `NEXT_PUBLIC_TIKTOK` | no | Usuario de TikTok |
+| `NEXT_PUBLIC_SITE_URL` | no | URL pública, para la miniatura al compartir el link |
 
-> **Los precios del catálogo son de referencia**, todavía no son los definitivos.
+> Sin las dos obligatorias el sitio **arranca igual**, con datos de ejemplo y un
+> aviso en la consola de desarrollo. Cargalas en el hosting antes de publicar, o
+> los pedidos no le van a llegar a nadie.
+
+> Los **precios del catálogo son de referencia**, todavía no son los definitivos.
 
 ## Estructura
 
@@ -127,7 +134,7 @@ src/
 │  └─ ui/                     primitivas de shadcn/ui
 │
 ├─ lib/
-│  ├─ config/shop.ts          datos del negocio (contacto, condiciones de entrega)
+│  ├─ config/shop.ts          datos del negocio y condiciones de entrega
 │  ├─ config/storefront.ts    storefront externo (opcional)
 │  ├─ format.ts               formato de precios
 │  └─ utils.ts
@@ -164,8 +171,8 @@ Para sumar un producto: dejar la foto en `public/products/` (`.webp` cuadrado de
 ~1400 px) y agregar la entrada. En [`assets/README.md`](assets/README.md) está el
 comando para convertir una foto de celular al formato correcto.
 
-Los datos del negocio (contacto, condiciones de entrega, días de anticipación)
-están en **`src/lib/config/shop.ts`**.
+Los datos del negocio (condiciones de entrega, días de anticipación) están en
+**`src/lib/config/shop.ts`**.
 
 ## Cómo funciona el pedido
 
@@ -191,8 +198,8 @@ el catálogo local solo como fallback.
 ## Despliegue
 
 Cualquier hosting con soporte para Next.js. Se conecta el repo y no hace falta
-configurar el build: se detecta solo. La única variable que conviene cargar es
-`NEXT_PUBLIC_SITE_URL` con el dominio final.
+configurar el build: se detecta solo. Hay que cargar las variables de entorno de
+contacto y, si se quiere la miniatura al compartir, `NEXT_PUBLIC_SITE_URL`.
 
 No hace falta base de datos ni pasarela de pago.
 
