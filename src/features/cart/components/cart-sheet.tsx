@@ -42,7 +42,7 @@ export function CartSheet() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [fulfillment, setFulfillment] = useState<string>(shopConfig.fulfillment[0].id);
-  const [date, setDate] = useState(minDate());
+  const [date, setDate] = useState("");
   const [notes, setNotes] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showDeliveryNotes, setShowDeliveryNotes] = useState(false);
@@ -50,6 +50,21 @@ export function CartSheet() {
   const handleCheckout = async () => {
     if (!name.trim()) {
       toast.error("Necesitamos tu nombre para tomar el pedido.");
+      return;
+    }
+
+    if (!date) {
+      toast.error("Elegí la fecha de entrega para poder enviar el pedido.");
+      setShowDeliveryNotes(true);
+      document.getElementById("cart-date")?.focus();
+      return;
+    }
+
+    if (date < minDate()) {
+      toast.error(
+        `Los pedidos necesitan ${shopConfig.leadTimeDays} días de anticipación. Elegí otra fecha o consultanos por WhatsApp.`,
+      );
+      document.getElementById("cart-date")?.focus();
       return;
     }
 
@@ -101,7 +116,7 @@ export function CartSheet() {
         ``,
         `Total: ${formatPrice(order.total)}`,
         `Entrega: ${fulfillmentLabel}`,
-        `Fecha de entrega: ${order.date ?? "a coordinar"}`,
+        `Fecha de entrega: ${order.date}`,
         `Nombre: ${order.customer.name}`,
         order.customer.phone ? `Teléfono: ${order.customer.phone}` : "",
         order.customer.notes ? `Notas: ${order.customer.notes}` : "",
@@ -242,6 +257,8 @@ export function CartSheet() {
                 <Input
                   id="cart-date"
                   type="date"
+                  required
+                  aria-required="true"
                   min={minDate()}
                   value={date}
                   onFocus={() => setShowDeliveryNotes(true)}
@@ -305,7 +322,7 @@ export function CartSheet() {
             <Button
               className="h-12 w-full rounded-full text-base"
               onClick={handleCheckout}
-              disabled={isSending}
+              disabled={isSending || !name.trim() || !date}
             >
               {isSending ? "Preparando…" : "Confirmar por WhatsApp"}
             </Button>
