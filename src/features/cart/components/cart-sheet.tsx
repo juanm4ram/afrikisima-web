@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Minus, Plus, Trash2, X } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { shopConfig } from "@/lib/config/shop";
 import { formatPrice } from "@/lib/format";
 import { useCart } from "@/features/cart/cart-provider";
+import { ConditionsDialog } from "./conditions-dialog";
 
 function minDate() {
   const date = new Date();
@@ -45,7 +46,8 @@ export function CartSheet() {
   const [date, setDate] = useState("");
   const [notes, setNotes] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [showDeliveryNotes, setShowDeliveryNotes] = useState(false);
+  const [conditionsAccepted, setConditionsAccepted] = useState(false);
+  const [showConditions, setShowConditions] = useState(false);
 
   const handleCheckout = async () => {
     if (!name.trim()) {
@@ -55,7 +57,7 @@ export function CartSheet() {
 
     if (!date) {
       toast.error("Elegí la fecha de entrega para poder enviar el pedido.");
-      setShowDeliveryNotes(true);
+      if (!conditionsAccepted) setShowConditions(true);
       document.getElementById("cart-date")?.focus();
       return;
     }
@@ -254,37 +256,31 @@ export function CartSheet() {
                 <Label htmlFor="cart-date" className="eyebrow">
                   Fecha de Entrega
                 </Label>
-                <Input
-                  id="cart-date"
-                  type="date"
-                  required
-                  aria-required="true"
-                  min={minDate()}
-                  value={date}
-                  onFocus={() => setShowDeliveryNotes(true)}
-                  onClick={() => setShowDeliveryNotes(true)}
-                  onChange={(event) => setDate(event.target.value)}
-                  className="rounded-xl bg-background"
-                />
-                {showDeliveryNotes && (
-                  <div className="relative rounded-xl border border-border bg-secondary/60 p-3 pr-8 text-xs leading-relaxed text-secondary-foreground">
+                <div className="relative">
+                  <Input
+                    id="cart-date"
+                    type="date"
+                    required
+                    aria-required="true"
+                    min={minDate()}
+                    value={date}
+                    disabled={!conditionsAccepted}
+                    onChange={(event) => setDate(event.target.value)}
+                    className="rounded-xl bg-background"
+                  />
+                  {!conditionsAccepted && (
                     <button
                       type="button"
-                      onClick={() => setShowDeliveryNotes(false)}
-                      aria-label="Cerrar aclaraciones"
-                      className="absolute right-2 top-2 text-secondary-foreground/60 transition-colors hover:text-secondary-foreground"
-                    >
-                      <X className="size-3.5" />
-                    </button>
-                    <ul className="space-y-1.5">
-                      {shopConfig.deliveryNotes.map((note) => (
-                        <li key={note} className="flex gap-1.5">
-                          <span aria-hidden>–</span>
-                          <span>{note}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                      onClick={() => setShowConditions(true)}
+                      aria-label="Ver y aceptar las condiciones del pedido"
+                      className="absolute inset-0 cursor-pointer rounded-xl"
+                    />
+                  )}
+                </div>
+                {!conditionsAccepted && (
+                  <p className="text-xs text-muted-foreground">
+                    Tocá el campo para leer y aceptar las condiciones del pedido.
+                  </p>
                 )}
               </div>
               <div className="col-span-2 space-y-1.5">
@@ -336,6 +332,19 @@ export function CartSheet() {
           </div>
         )}
       </SheetContent>
+
+      <ConditionsDialog
+        open={showConditions}
+        onAccept={() => {
+          setConditionsAccepted(true);
+          setShowConditions(false);
+          // devolvemos el foco al campo para que pueda elegir la fecha
+          window.setTimeout(
+            () => document.getElementById("cart-date")?.focus(),
+            80,
+          );
+        }}
+      />
     </Sheet>
   );
 }
