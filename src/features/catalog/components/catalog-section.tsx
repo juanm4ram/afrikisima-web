@@ -4,10 +4,14 @@ import { useMemo, useState } from "react";
 
 import { ProductCarousel } from "./product-carousel";
 import { ProductDialog } from "./product-dialog";
-import { categories, products } from "@/features/catalog/data/products";
-import type { Product } from "@/features/catalog/types";
+import type { Category, Product } from "@/features/catalog/types";
 
-export function CatalogSection() {
+interface CatalogSectionProps {
+  categories: Category[];
+  products: Product[];
+}
+
+export function CatalogSection({ categories, products }: CatalogSectionProps) {
   const [selected, setSelected] = useState<Product | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("todo");
 
@@ -19,7 +23,7 @@ export function CatalogSection() {
           items: products.filter((product) => product.categoryId === category.id),
         }))
         .filter((category) => category.items.length > 0),
-    [],
+    [categories, products],
   );
 
   const visible =

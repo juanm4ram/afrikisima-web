@@ -101,6 +101,8 @@ entorno, así el repositorio público no expone el WhatsApp ni el mail del negoc
 | `NEXT_PUBLIC_INSTAGRAM` | no | Usuario de Instagram |
 | `NEXT_PUBLIC_TIKTOK` | no | Usuario de TikTok |
 | `NEXT_PUBLIC_SITE_URL` | no | URL pública, para la miniatura al compartir el link |
+| `NEXT_PUBLIC_SUPABASE_URL` | no | URL del proyecto Supabase |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | no | Clave pública del proyecto Supabase |
 
 > Sin las dos obligatorias el sitio **arranca igual**, con datos de ejemplo y un
 > aviso en la consola de desarrollo. Cargalas en el hosting antes de publicar, o
@@ -113,6 +115,7 @@ entorno, así el repositorio público no expone el WhatsApp ni el mail del negoc
 ```
 src/
 ├─ app/                       solo rutas (App Router)
+│  ├─ admin/                  panel privado de costos y recetas
 │  ├─ api/catalog/route.ts    GET  — la carta
 │  ├─ api/orders/route.ts     POST — valida y totaliza el pedido
 │  ├─ layout.tsx
@@ -121,7 +124,8 @@ src/
 ├─ features/                  cada feature con sus componentes y sus datos
 │  ├─ catalog/
 │  │  ├─ components/          catalog-section · product-card · product-carousel · product-dialog
-│  │  ├─ data/products.ts     ← LA CARTA
+│  │  ├─ data/products.ts     catálogo local de respaldo
+│  │  ├─ data/catalog-repository.ts
 │  │  ├─ types.ts
 │  │  └─ index.ts             API pública de la feature
 │  └─ cart/
@@ -135,7 +139,7 @@ src/
 │
 ├─ lib/
 │  ├─ config/shop.ts          datos del negocio y condiciones de entrega
-│  ├─ config/storefront.ts    storefront externo (opcional)
+│  ├─ supabase/               clientes de navegador, servidor y sesión
 │  ├─ format.ts               formato de precios
 │  └─ utils.ts
 │
@@ -158,14 +162,18 @@ Convenciones:
   piezas del armazón de la página.
 - Imports absolutos con el alias `@/`.
 
-## Editar la carta
+## Editar la carta y los costos
 
-Todo en **`src/features/catalog/data/products.ts`**:
+Sin Supabase, el sitio usa **`src/features/catalog/data/products.ts`** como
+catálogo de respaldo. Cuando se configuran las variables de Supabase, la carta,
+los ingredientes, las recetas y los precios publicados salen de PostgreSQL.
 
-- `categories` — las secciones de la barra de filtros. **El orden del array es el
-  orden en la página y en el menú.**
-- `products` — nombre, descripción, foto, categoría y tamaños de cada producto.
-- `cakeSizes(mediana, grande)` — helper para los dos tamaños estándar.
+El panel privado está en `/admin`. Permite cargar ingredientes, conservar su
+historial de precios, definir las cantidades de cada receta, sumar mano de obra,
+packaging, indirectos y margen, y publicar los precios sugeridos.
+
+La migración inicial y las instrucciones están en
+[`supabase/README.md`](supabase/README.md).
 
 Para sumar un producto: dejar la foto en `public/products/` (`.webp` cuadrado de
 ~1400 px) y agregar la entrada. En [`assets/README.md`](assets/README.md) está el
@@ -191,9 +199,8 @@ del cliente**. `POST /api/orders` recibe solo `productId`, `sizeId` y `quantity`
 busca cada producto en el catálogo y arma el total del lado del servidor, así un
 carrito manipulado desde el navegador no puede alterar lo que se cotiza.
 
-`GET /api/catalog` expone la carta. Conserva el patrón del starter: si se
-configuran las credenciales de un storefront externo, consulta ese backend y usa
-el catálogo local solo como fallback.
+`GET /api/catalog` expone la carta publicada en Supabase y usa el catálogo local
+como fallback si la integración todavía no está configurada o no responde.
 
 ## Despliegue
 
@@ -201,14 +208,16 @@ Cualquier hosting con soporte para Next.js. Se conecta el repo y no hace falta
 configurar el build: se detecta solo. Hay que cargar las variables de entorno de
 contacto y, si se quiere la miniatura al compartir, `NEXT_PUBLIC_SITE_URL`.
 
-No hace falta base de datos ni pasarela de pago.
+Supabase es opcional durante la migración y necesario para el panel de costos.
+No hace falta pasarela de pago.
 
 ## Estado del proyecto
 
 - [x] Catálogo, carrito y checkout por WhatsApp
 - [x] Diseño responsive
 - [ ] Precios definitivos
-- [ ] Panel de administración (hoy la carta se edita en el código)
+- [x] Base y panel inicial de ingredientes, recetas y precios
+- [ ] Carga de recetas y costos reales de producción
 - [ ] Cobro online
 
 ## Licencia y créditos

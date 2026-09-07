@@ -101,6 +101,8 @@ so the public repository does not expose the shop's phone number or email.
 | `NEXT_PUBLIC_INSTAGRAM` | no | Instagram handle |
 | `NEXT_PUBLIC_TIKTOK` | no | TikTok handle |
 | `NEXT_PUBLIC_SITE_URL` | no | Public URL, used for the link preview image |
+| `NEXT_PUBLIC_SUPABASE_URL` | no | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | no | Supabase project publishable key |
 
 > Without the two required ones the site **still runs**, using placeholder data
 > and printing a warning in the development console. Set them on your host before
@@ -113,6 +115,7 @@ so the public repository does not expose the shop's phone number or email.
 ```
 src/
 ├─ app/                       routes only (App Router)
+│  ├─ admin/                  private costing and recipe panel
 │  ├─ api/catalog/route.ts    GET  — the menu
 │  ├─ api/orders/route.ts     POST — validates and totals the order
 │  ├─ layout.tsx
@@ -121,7 +124,8 @@ src/
 ├─ features/                  each feature owns its components and its data
 │  ├─ catalog/
 │  │  ├─ components/          catalog-section · product-card · product-carousel · product-dialog
-│  │  ├─ data/products.ts     ← THE MENU
+│  │  ├─ data/products.ts     local fallback catalogue
+│  │  ├─ data/catalog-repository.ts
 │  │  ├─ types.ts
 │  │  └─ index.ts             the feature's public API
 │  └─ cart/
@@ -135,7 +139,7 @@ src/
 │
 ├─ lib/
 │  ├─ config/shop.ts          business details and delivery terms
-│  ├─ config/storefront.ts    external storefront (optional)
+│  ├─ supabase/               browser, server and session clients
 │  ├─ format.ts               price formatting
 │  └─ utils.ts
 │
@@ -158,14 +162,18 @@ Conventions:
   the pieces of the page shell.
 - Absolute imports through the `@/` alias.
 
-## Editing the menu
+## Editing the menu and costs
 
-Everything lives in **`src/features/catalog/data/products.ts`**:
+Without Supabase, the site uses **`src/features/catalog/data/products.ts`** as
+its fallback catalogue. Once Supabase variables are configured, the menu,
+ingredients, recipes and published prices come from PostgreSQL.
 
-- `categories` — the sections in the filter bar. **Array order is the order on
-  the page and in the nav.**
-- `products` — name, description, photo, category and sizes for each product.
-- `cakeSizes(medium, large)` — helper for the two standard sizes.
+The private panel lives at `/admin`. It records ingredient price history,
+recipe quantities, labour, packaging, overhead and target margin, then lets an
+administrator publish the suggested prices.
+
+The initial migration and setup instructions are in
+[`supabase/README.md`](supabase/README.md).
 
 To add a product: drop the photo into `public/products/` (square `.webp`, around
 1400 px) and add the entry. [`assets/README.md`](assets/README.md) has the command
@@ -191,9 +199,8 @@ The important part is the server step: **prices are never taken from the client*
 product up in the catalogue and builds the total server-side, so a cart tampered
 with in the browser cannot change what gets quoted.
 
-`GET /api/catalog` serves the menu. It keeps the starter's pattern: if external
-storefront credentials are configured it queries that backend and falls back to
-the local catalogue only on failure.
+`GET /api/catalog` serves the catalogue published in Supabase and falls back to
+the local catalogue when the integration is not configured or unavailable.
 
 ## Deployment
 
@@ -201,14 +208,16 @@ Any host with Next.js support. Connect the repository — no build configuration
 needed, it is detected automatically. Set the contact environment variables and,
 if you want link previews, `NEXT_PUBLIC_SITE_URL`.
 
-No database and no payment gateway required.
+Supabase is optional during migration and required for the costing panel. No
+payment gateway is required.
 
 ## Roadmap
 
 - [x] Catalogue, cart and WhatsApp checkout
 - [x] Responsive design
 - [ ] Final prices
-- [ ] Admin panel (the menu is currently edited in code)
+- [x] Initial ingredient, recipe and pricing database and admin panel
+- [ ] Load real recipes and production costs
 - [ ] Online payments
 
 ## Licence and credits

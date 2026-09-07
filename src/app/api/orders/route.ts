@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { findProduct } from "@/features/catalog/data/products";
+import { loadCatalog } from "@/features/catalog/data/catalog-repository";
 import { shopConfig } from "@/lib/config/shop";
 
 interface IncomingLine {
@@ -62,9 +62,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const catalog = await loadCatalog();
   const lines = [];
   for (const line of body.items) {
-    const product = findProduct(line.productId);
+    const product =
+      catalog.products.find((item) => item.id === line.productId) ?? null;
     const size = product?.sizes.find((item) => item.id === line.sizeId);
     const quantity = Number.isFinite(line.quantity)
       ? Math.min(Math.max(Math.trunc(line.quantity), 1), 20)

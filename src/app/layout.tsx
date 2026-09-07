@@ -5,11 +5,7 @@ import "@fontsource-variable/jost";
 import "@fontsource-variable/playfair-display";
 import "@/styles/globals.css";
 
-import { CartProvider, CartSheet } from "@/features/cart";
-import { SiteHeader } from "@/components/layout/site-header";
-import { WhatsappFab } from "@/components/layout/whatsapp-fab";
-import { ErrorBoundary } from "@/components/layout/error-boundary";
-import { Toaster } from "@/components/ui/sonner";
+import { SiteShell } from "@/components/layout/site-shell";
 import { shopConfig } from "@/lib/config/shop";
 
 
@@ -36,15 +32,7 @@ export default function RootLayout({
   return (
     <html lang="es-AR">
       <body className="antialiased">
-        <ErrorBoundary>
-          <CartProvider>
-            <SiteHeader />
-            {children}
-            <CartSheet />
-            <WhatsappFab />
-            <Toaster position="top-center" />
-          </CartProvider>
-        </ErrorBoundary>
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );

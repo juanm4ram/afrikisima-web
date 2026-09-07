@@ -1,0 +1,2 @@
+[functions."supabase-health"]
+schedule = "17 */8 * * *"
