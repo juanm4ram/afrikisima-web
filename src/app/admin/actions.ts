@@ -11,6 +11,18 @@ function numberField(form: FormData, name: string) {
   return value;
 }
 
+function optionalNumberField(form: FormData, name: string) {
+  const raw = String(form.get(name) ?? "").trim();
+  if (!raw) return null;
+  const value = Number(raw.replace(",", "."));
+  if (!Number.isFinite(value)) throw new Error("Valor inválido: " + name);
+  return value;
+}
+
+function optionalTextField(form: FormData, name: string) {
+  return String(form.get(name) ?? "").trim() || null;
+}
+
 async function adminClient() {
   const supabase = await createSupabaseServerClient();
   if (!supabase) throw new Error("Supabase no está configurado");
@@ -91,4 +103,114 @@ export async function deleteRecipeItem(form: FormData) {
     .eq("id", String(form.get("recipe_item_id")));
   if (error) throw new Error(error.message);
   revalidatePath("/admin");
+  revalidatePath("/admin/presupuestos");
+}
+
+export async function createCustomBudget(form: FormData) {
+  const supabase = await adminClient();
+  const name = String(form.get("name") ?? "").trim();
+  if (!name) throw new Error("El presupuesto necesita un nombre");
+
+  const { data: recipe, error } = await supabase
+    .from("recipes")
+    .insert({
+      variant_id: null,
+      name,
+      customer_name: optionalTextField(form, "customer_name"),
+      event_date: optionalTextField(form, "event_date"),
+      mold_size: optionalTextField(form, "mold_size"),
+      presentation: optionalTextField(form, "presentation"),
+      quoted_price: optionalNumberField(form, "quoted_price"),
+      status: "draft",
+    })
+    .select("id")
+    .single();
+  if (error) throw new Error(error.message);
+
+  const { error: sectionsError } = await supabase.from("recipe_sections").insert([
+    { recipe_id: recipe.id, name: "Bizcocho", sort_order: 10 },
+    { recipe_id: recipe.id, name: "Relleno", sort_order: 20 },
+    { recipe_id: recipe.id, name: "Cobertura", sort_order: 30 },
+  ]);
+  if (sectionsError) throw new Error(sectionsError.message);
+  revalidatePath("/admin/presupuestos");
+}
+
+export async function updateCustomBudget(form: FormData) {
+  const supabase = await adminClient();
+  const recipeId = String(form.get("recipe_id"));
+  const { error } = await supabase
+    .from("recipes")
+    .update({
+      name: String(form.get("name") ?? "").trim(),
+      customer_name: optionalTextField(form, "customer_name"),
+      event_date: optionalTextField(form, "event_date"),
+      mold_size: optionalTextField(form, "mold_size"),
+      presentation: optionalTextField(form, "presentation"),
+      quoted_price: optionalNumberField(form, "quoted_price"),
+      labor_cost: numberField(form, "labor_cost"),
+      packaging_cost: numberField(form, "packaging_cost"),
+      overhead_percent: numberField(form, "overhead_percent"),
+      target_margin_percent: numberField(form, "target_margin_percent"),
+      rounding_increment: numberField(form, "rounding_increment"),
+      status: String(form.get("status") ?? "draft"),
+      notes: optionalTextField(form, "notes"),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", recipeId)
+    .is("variant_id", null);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/presupuestos");
+}
+
+export async function addBudgetSection(form: FormData) {
+  const supabase = await adminClient();
+  const { error } = await supabase.from("recipe_sections").insert({
+    recipe_id: String(form.get("recipe_id")),
+    name: String(form.get("name") ?? "").trim(),
+    sort_order: numberField(form, "sort_order"),
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/presupuestos");
+}
+
+export async function setBudgetRecipeItem(form: FormData) {
+  const supabase = await adminClient();
+  const recipeId = String(form.get("recipe_id"));
+  const sectionId = String(form.get("section_id"));
+  const ingredientId = String(form.get("ingredient_id"));
+  const { error } = await supabase.from("recipe_items").upsert(
+    {
+      recipe_id: recipeId,
+      section_id: sectionId,
+      ingredient_id: ingredientId,
+      quantity: numberField(form, "quantity"),
+      quantity_note: optionalTextField(form, "quantity_note"),
+    },
+    { onConflict: "recipe_id,section_id,ingredient_id" },
+  );
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/presupuestos");
+}
+
+export async function addBudgetExtra(form: FormData) {
+  const supabase = await adminClient();
+  const { error } = await supabase.from("recipe_extras").insert({
+    recipe_id: String(form.get("recipe_id")),
+    kind: String(form.get("kind") ?? "presentation"),
+    name: String(form.get("name") ?? "").trim(),
+    amount: numberField(form, "amount"),
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/presupuestos");
+}
+
+export async function deleteBudgetExtra(form: FormData) {
+  const supabase = await adminClient();
+  const { error } = await supabase
+    .from("recipe_extras")
+    .delete()
+    .eq("id", String(form.get("extra_id")));
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/presupuestos");
 }

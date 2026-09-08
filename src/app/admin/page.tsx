@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,9 @@ export default async function AdminPage() {
           <p className="eyebrow mb-2">Administración</p>
           <h1 className="text-4xl">Ingredientes y precios</h1>
           <p className="mt-2 text-muted-foreground">Sesión: {auth.user.email}</p>
+          <Link href="/admin/presupuestos" className="mt-3 inline-block text-sm underline">
+            Abrir presupuestos personalizados
+          </Link>
         </div>
         <LogoutButton />
       </header>
