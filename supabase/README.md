@@ -5,6 +5,7 @@
 
        202609070001_initial_pricing.sql
        202609070002_custom_budgets.sql
+       202609070003_ingredient_brand.sql
 3. En Authentication > Users, crear el usuario de la administradora.
 4. Ejecutar en SQL Editor, reemplazando el correo:
 

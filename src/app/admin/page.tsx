@@ -24,6 +24,7 @@ interface IngredientCost {
   base_unit: string;
   package_quantity: number | string | null;
   package_price: number | string | null;
+  brand: string | null;
   supplier: string | null;
   effective_unit_cost: number | string | null;
   price_change_percent: number | string | null;
@@ -119,8 +120,9 @@ export default async function AdminPage() {
           </div>
           <Field label="Contenido" name="package_quantity" type="number" step="0.01" />
           <Field label="Precio del envase" name="package_price" type="number" step="0.01" />
-          <Field label="Merma %" name="waste_percent" type="number" step="0.1" defaultValue="0" />
-          <Field className="lg:col-span-2" label="Proveedor" name="supplier" required={false} />
+          <Field label="Merma % (opcional)" name="waste_percent" type="number" step="0.1" defaultValue="0" required={false} />
+          <Field label="Marca" name="brand" required={false} />
+          <Field label="Proveedor" name="supplier" required={false} />
           <div className="flex items-end lg:col-span-2">
             <Button type="submit">Guardar ingrediente</Button>
           </div>
@@ -138,10 +140,12 @@ export default async function AdminPage() {
           <p className="p-6 text-muted-foreground">Todavía no hay ingredientes cargados.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[850px] text-left text-sm">
+            <table className="w-full min-w-[1100px] text-left text-sm">
               <thead className="bg-muted/60 text-muted-foreground">
                 <tr>
                   <th className="px-5 py-3">Ingrediente</th>
+                  <th className="px-5 py-3">Marca</th>
+                  <th className="px-5 py-3">Proveedor</th>
                   <th className="px-5 py-3">Precio</th>
                   <th className="px-5 py-3">Contenido</th>
                   <th className="px-5 py-3">Costo unitario</th>
@@ -153,15 +157,15 @@ export default async function AdminPage() {
                   <tr key={row.id} className="border-t">
                     <td className="px-5 py-4 font-medium">
                       {row.name}
-                      <span className="block text-xs font-normal text-muted-foreground">
-                        {row.supplier || "Sin proveedor"}
-                        {row.price_change_percent !== null &&
-                          " · " +
-                            (Number(row.price_change_percent) >= 0 ? "+" : "") +
-                            Number(row.price_change_percent).toFixed(1) +
-                            "%"}
-                      </span>
+                      {row.price_change_percent !== null && (
+                        <span className="block text-xs font-normal text-muted-foreground">
+                          {(Number(row.price_change_percent) >= 0 ? "+" : "") +
+                            Number(row.price_change_percent).toFixed(1) + "%"}
+                        </span>
+                      )}
                     </td>
+                    <td className="px-5 py-4">{row.brand || "—"}</td>
+                    <td className="px-5 py-4">{row.supplier || "—"}</td>
                     <td className="px-5 py-4">
                       {row.package_price === null ? "—" : formatPrice(Number(row.package_price))}
                     </td>
@@ -174,7 +178,7 @@ export default async function AdminPage() {
                         : "$" + Number(row.effective_unit_cost).toFixed(2) + " / " + row.base_unit}
                     </td>
                     <td className="px-5 py-4">
-                      <form action={recordIngredientPrice} className="flex gap-2">
+                      <form action={recordIngredientPrice} className="grid min-w-[430px] grid-cols-5 gap-2">
                         <input type="hidden" name="ingredient_id" value={row.id} />
                         <Input
                           aria-label="Contenido del envase"
@@ -192,10 +196,20 @@ export default async function AdminPage() {
                           type="number"
                           min="0"
                           step="0.01"
-                          className="w-28"
                           required
                         />
-                        <input type="hidden" name="supplier" value={row.supplier ?? ""} />
+                        <Input
+                          aria-label="Marca"
+                          name="brand"
+                          defaultValue={row.brand ?? ""}
+                          placeholder="Marca"
+                        />
+                        <Input
+                          aria-label="Proveedor"
+                          name="supplier"
+                          defaultValue={row.supplier ?? ""}
+                          placeholder="Proveedor"
+                        />
                         <Button type="submit" size="sm">Actualizar</Button>
                       </form>
                     </td>

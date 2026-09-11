@@ -40,10 +40,11 @@ export async function addIngredient(form: FormData) {
   const { error } = await supabase.rpc("add_ingredient_with_price", {
     ingredient_name: String(form.get("name") ?? "").trim(),
     ingredient_unit: String(form.get("base_unit") ?? "g"),
-    ingredient_waste_percent: numberField(form, "waste_percent"),
+    ingredient_waste_percent: optionalNumberField(form, "waste_percent") ?? 0,
     initial_package_quantity: numberField(form, "package_quantity"),
     initial_package_price: numberField(form, "package_price"),
     price_supplier: String(form.get("supplier") ?? "").trim() || null,
+    price_brand: String(form.get("brand") ?? "").trim() || null,
   });
   if (error) throw new Error(error.message);
   revalidatePath("/admin");
@@ -56,6 +57,7 @@ export async function recordIngredientPrice(form: FormData) {
     new_package_quantity: numberField(form, "package_quantity"),
     new_package_price: numberField(form, "package_price"),
     price_supplier: String(form.get("supplier") ?? "").trim() || null,
+    price_brand: String(form.get("brand") ?? "").trim() || null,
   });
   if (error) throw new Error(error.message);
   revalidatePath("/admin");
