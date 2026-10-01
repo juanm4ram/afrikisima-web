@@ -29,13 +29,16 @@ interface Budget {
   notes: string | null;
   target_margin_percent: number | string;
   rounding_increment: number | string;
-  supply_cost: number | string;
+  supply_cost: number | string | null;
+  known_supply_cost: number | string;
+  missing_price_count: number | string;
   legacy_extra_cost: number | string;
-  total_cost: number | string;
+  total_cost: number | string | null;
+  unrounded_suggested_price: number | string | null;
   suggested_price: number | string | null;
   quoted_result: number | string | null;
   servings: number | string;
-  cost_per_serving: number | string;
+  cost_per_serving: number | string | null;
   suggested_price_per_serving: number | string | null;
   yield_quantity: number | string;
 }
@@ -111,6 +114,12 @@ export default async function BudgetsPage() {
           <Button asChild variant="outline">
             <a href="/api/admin/export">Descargar Excel</a>
           </Button>
+          <Button asChild variant="outline">
+            <a href="/api/admin/export/csv?type=recipes">Recetas CSV</a>
+          </Button>
+          <Button asChild variant="outline">
+            <a href="/api/admin/export/csv?type=supplies">Insumos CSV</a>
+          </Button>
           <LogoutButton />
         </div>
       </header>
@@ -146,11 +155,11 @@ export default async function BudgetsPage() {
             return (
               <article key={budget.id} className="rounded-3xl border bg-card p-6 shadow-sm">
                 <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
-                  <Summary label="Insumos" value={formatPrice(Number(budget.supply_cost))} />
+                  <Summary label="Insumos conocidos" value={formatPrice(Number(budget.known_supply_cost))} />
                   {Number(budget.legacy_extra_cost) > 0 && (
                     <Summary label="Costos anteriores" value={formatPrice(Number(budget.legacy_extra_cost))} />
                   )}
-                  <Summary label="Costo total" value={formatPrice(Number(budget.total_cost))} />
+                  <Summary label="Costo total" value={budget.total_cost === null ? "Pendiente" : formatPrice(Number(budget.total_cost))} />
                   <Summary
                     label="Precio sugerido"
                     value={budget.suggested_price === null ? "Pendiente" : formatPrice(Number(budget.suggested_price))}
@@ -161,13 +170,19 @@ export default async function BudgetsPage() {
                   />
                   <Summary
                     label={`Costo por porción (${budget.servings})`}
-                    value={formatPrice(Number(budget.cost_per_serving))}
+                    value={budget.cost_per_serving === null ? "Pendiente" : formatPrice(Number(budget.cost_per_serving))}
                   />
                   <Summary
                     label={`Sugerido por porción (${budget.servings})`}
                     value={budget.suggested_price_per_serving === null ? "Pendiente" : formatPrice(Number(budget.suggested_price_per_serving))}
                   />
                 </div>
+
+                {Number(budget.missing_price_count) > 0 && (
+                  <p className="mb-5 rounded-xl bg-butter p-3 text-sm">
+                    Hay {budget.missing_price_count} insumos sin precio vigente. El precio sugerido permanecerá pendiente hasta completar esos costos.
+                  </p>
+                )}
 
                 <form action={updateCustomBudget} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
                   <input type="hidden" name="recipe_id" value={budget.id} />

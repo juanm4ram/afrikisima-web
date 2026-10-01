@@ -169,9 +169,10 @@ Sin Supabase, el sitio usa **`src/features/catalog/data/products.ts`** como
 catálogo de respaldo. Cuando se configuran las variables de Supabase, la carta,
 los ingredientes, las recetas y los precios publicados salen de PostgreSQL.
 
-El panel privado está en `/admin`. Permite cargar ingredientes, conservar su
-historial de precios, definir las cantidades de cada receta, sumar mano de obra,
-packaging, indirectos y margen, y publicar los precios sugeridos.
+El panel privado está en `/admin`. Permite cargar insumos, conservar su historial
+de precios, modificar las cantidades y secciones de cada receta, revisar el
+detalle del cálculo y publicar individualmente los precios sugeridos completos.
+También exporta recetas e insumos en Excel o CSV.
 
 La migración inicial y las instrucciones están en
 [`supabase/README.md`](supabase/README.md).

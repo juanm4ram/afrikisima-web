@@ -10,6 +10,7 @@
        202609110005_servings_purchase_units.sql
        202609110006_supplies.sql
        202609300007_reference_supplies_and_price_sources.sql
+       202610010008_catalog_recipes_and_detailed_costs.sql
 3. En Authentication > Users, crear el usuario de la administradora.
 4. Ejecutar en SQL Editor, reemplazando el correo:
 
@@ -31,10 +32,17 @@ receta en bizcocho, relleno, cobertura, packaging u otras secciones; registrar
 molde, presentación y precio ofrecido; y recalcular los costos cuando cambia el
 precio de un insumo.
 
-Los paneles administrativos incluyen el botón **Descargar Excel**. La descarga
-genera un archivo actualizado con las hojas Tortas, Detalle de recetas, Insumos
-e Historial de precios. La ruta `/api/admin/export` exige una sesión incluida en
-`app_admins`.
+Los paneles administrativos permiten descargar un Excel completo o archivos CSV
+separados de recetas e insumos. El Excel incluye las hojas Tortas, Detalle de
+recetas, Insumos e Historial de precios. Las rutas de exportación exigen una
+sesión incluida en `app_admins`.
+
+La migración `202610010008_catalog_recipes_and_detailed_costs.sql` crea una ficha
+editable para cada variante publicada y precarga las recetas respaldadas por las
+planillas proporcionadas. Las cantidades se guardan en `recipe_items`, pero cada
+costo se obtiene siempre del último registro de `ingredient_prices`. Si falta el
+precio de un insumo, el panel no calcula ni permite publicar un precio sugerido
+incompleto.
 
 Mientras las variables no estén configuradas, o si Supabase falla, la tienda
 continúa usando el catálogo local.

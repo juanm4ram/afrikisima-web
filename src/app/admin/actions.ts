@@ -116,6 +116,16 @@ export async function publishSuggestedPrices() {
   revalidatePath("/");
 }
 
+export async function publishSuggestedPrice(form: FormData) {
+  const supabase = await adminClient();
+  const { error } = await supabase.rpc("publish_suggested_price", {
+    target_variant_id: String(form.get("variant_id")),
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin");
+  revalidatePath("/");
+}
+
 export async function updateRecipeSettings(form: FormData) {
   const supabase = await adminClient();
   const { error } = await supabase.rpc("upsert_recipe_settings", {
@@ -138,6 +148,50 @@ export async function setRecipeItem(form: FormData) {
   });
   if (error) throw new Error(error.message);
   revalidatePath("/admin");
+}
+
+export async function addCatalogRecipeItem(form: FormData) {
+  const supabase = await adminClient();
+  const recipeId = String(form.get("recipe_id") ?? "");
+  const sectionId = String(form.get("section_id") ?? "");
+
+  if (!recipeId || !sectionId) {
+    const { error } = await supabase.rpc("set_recipe_item", {
+      target_variant_id: String(form.get("variant_id")),
+      target_ingredient_id: String(form.get("ingredient_id")),
+      required_quantity: numberField(form, "quantity"),
+    });
+    if (error) throw new Error(error.message);
+  } else {
+    const { error } = await supabase.from("recipe_items").upsert(
+      {
+        recipe_id: recipeId,
+        section_id: sectionId,
+        ingredient_id: String(form.get("ingredient_id")),
+        quantity: numberField(form, "quantity"),
+        quantity_note: optionalTextField(form, "quantity_note"),
+      },
+      { onConflict: "recipe_id,section_id,ingredient_id" },
+    );
+    if (error) throw new Error(error.message);
+  }
+
+  revalidatePath("/admin");
+}
+
+export async function updateCatalogRecipeItem(form: FormData) {
+  const supabase = await adminClient();
+  const { error } = await supabase
+    .from("recipe_items")
+    .update({
+      section_id: String(form.get("section_id")),
+      quantity: numberField(form, "quantity"),
+      quantity_note: optionalTextField(form, "quantity_note"),
+    })
+    .eq("id", String(form.get("recipe_item_id")));
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin");
+  revalidatePath("/admin/presupuestos");
 }
 
 export async function deleteRecipeItem(form: FormData) {
