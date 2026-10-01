@@ -103,6 +103,7 @@ entorno, así el repositorio público no expone el WhatsApp ni el mail del negoc
 | `NEXT_PUBLIC_SITE_URL` | no | URL pública, para la miniatura al compartir el link |
 | `NEXT_PUBLIC_SUPABASE_URL` | no | URL del proyecto Supabase |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | no | Clave pública del proyecto Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | no | Secreto de servidor usado por Netlify para actualizar precios de insumos |
 
 > Sin las dos obligatorias el sitio **arranca igual**, con datos de ejemplo y un
 > aviso en la consola de desarrollo. Cargalas en el hosting antes de publicar, o

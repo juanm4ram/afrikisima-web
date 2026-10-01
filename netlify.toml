@@ -1,2 +1,6 @@
 [functions."supabase-health"]
 schedule = "17 */8 * * *"
+
+[functions."sync-supply-prices"]
+# 10:15 UTC = 07:15 de Argentina.
+schedule = "15 10 * * *"

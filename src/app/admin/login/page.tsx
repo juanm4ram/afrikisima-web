@@ -7,7 +7,7 @@ export default function AdminLoginPage() {
         <p className="eyebrow mb-2">Administración</p>
         <h1 className="mb-2 text-3xl">Costos de Afrikísima</h1>
         <p className="mb-7 text-sm text-muted-foreground">
-          Acceso privado para actualizar ingredientes y revisar precios.
+          Acceso privado para actualizar insumos y revisar precios.
         </p>
         <LoginForm />
       </section>

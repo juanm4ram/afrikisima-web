@@ -103,6 +103,7 @@ so the public repository does not expose the shop's phone number or email.
 | `NEXT_PUBLIC_SITE_URL` | no | Public URL, used for the link preview image |
 | `NEXT_PUBLIC_SUPABASE_URL` | no | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | no | Supabase project publishable key |
+| `SUPABASE_SERVICE_ROLE_KEY` | no | Server-only secret used by Netlify to refresh supply prices |
 
 > Without the two required ones the site **still runs**, using placeholder data
 > and printing a warning in the development console. Set them on your host before
