@@ -92,6 +92,18 @@ interface RecipeSection {
   sort_order: number;
 }
 
+interface RecipeCostCompleteness {
+  recipe_id: string;
+  variant_id: string;
+  ingredient_item_count: number | string;
+  packaging_item_count: number | string;
+  missing_price_count: number | string;
+  ingredient_cost: number | string;
+  packaging_cost: number | string;
+  total_known_supply_cost: number | string;
+  is_complete: boolean;
+}
+
 export default async function AdminPage() {
   const supabase = await createSupabaseServerClient();
   if (!supabase) redirect("/admin/login");
@@ -122,17 +134,23 @@ export default async function AdminPage() {
     { data: productCosts },
     { data: recipeItems },
     { data: recipeSections },
+    { data: recipeCostCompleteness },
   ] =
     await Promise.all([
     supabase.from("current_ingredient_costs").select("*").order("name"),
     supabase.from("product_costs").select("*").order("product_name"),
     supabase.from("recipe_items_admin").select("*").order("ingredient_name"),
     supabase.from("recipe_sections").select("id,recipe_id,name,sort_order").order("sort_order"),
+    supabase.from("recipe_cost_completeness").select("*"),
   ]);
   const ingredientRows = (ingredients ?? []) as IngredientCost[];
   const productRows = (productCosts ?? []) as ProductCost[];
   const recipeItemRows = (recipeItems ?? []) as RecipeItem[];
   const recipeSectionRows = (recipeSections ?? []) as RecipeSection[];
+  const recipeCostCompletenessRows = (recipeCostCompleteness ?? []) as RecipeCostCompleteness[];
+  const completenessByVariant = new Map(
+    recipeCostCompletenessRows.map((row) => [row.variant_id, row]),
+  );
   const publishableCount = productRows.filter((row) => row.suggested_price !== null).length;
 
   return (
@@ -314,7 +332,7 @@ export default async function AdminPage() {
             <div className="grid grid-cols-[52px_minmax(260px,1.5fr)_150px_145px_145px_145px_135px_48px] border-b bg-[#f3eee5] text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
               <div className="border-r px-3 py-3 text-center">#</div>
               <div className="border-r px-3 py-3">Producto / variante</div>
-              <div className="border-r px-3 py-3 text-right">Costo insumos</div>
+              <div className="border-r px-3 py-3 text-right">Ingredientes + packaging</div>
               <div className="border-r px-3 py-3 text-right">Costo receta</div>
               <div className="border-r px-3 py-3 text-right">Sugerido</div>
               <div className="border-r px-3 py-3 text-right">Publicado</div>
@@ -327,6 +345,7 @@ export default async function AdminPage() {
               const sections = recipeSectionRows.filter((section) => section.recipe_id === row.recipe_id);
               const missingPriceCount = Number(row.missing_price_count ?? 0);
               const hasItems = Number(row.item_count ?? 0) > 0;
+              const costCompleteness = completenessByVariant.get(row.variant_id);
 
               return (
                 <details key={row.variant_id} className="group border-b last:border-b-0 open:bg-[#fffdf8]">
@@ -368,7 +387,13 @@ export default async function AdminPage() {
                     )}
 
                     <div className="mb-4 grid grid-cols-4 overflow-hidden rounded-xl border bg-white text-xs">
-                      <FormulaCell label="1 · Costo del lote" value={formatNullablePrice(row.known_supply_cost)} detail="Σ cantidad × costo unitario" />
+                      <FormulaCell
+                        label="1 · Costo del lote"
+                        value={formatNullablePrice(row.known_supply_cost)}
+                        detail={costCompleteness
+                          ? `Ingredientes ${formatPrice(Number(costCompleteness.ingredient_cost))} + packaging ${formatPrice(Number(costCompleteness.packaging_cost))}`
+                          : "Σ cantidad × costo unitario (incluye packaging)"}
+                      />
                       <FormulaCell label="2 · Costo por producto" value={formatNullablePrice(row.total_cost)} detail={`Lote ÷ rendimiento ${row.yield_quantity ?? 1}`} />
                       <FormulaCell label="3 · Antes de redondear" value={formatNullablePrice(row.unrounded_suggested_price)} detail={`Costo ÷ (1 − ${row.target_margin_percent ?? 30}%)`} />
                       <FormulaCell label="4 · Precio sugerido" value={formatNullablePrice(row.suggested_price, "Pendiente")} detail={`Redondeo ${formatPrice(Number(row.rounding_increment ?? 500))}`} last />

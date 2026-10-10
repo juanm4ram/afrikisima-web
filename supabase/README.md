@@ -11,6 +11,7 @@
        202609110006_supplies.sql
        202609300007_reference_supplies_and_price_sources.sql
        202610010008_catalog_recipes_and_detailed_costs.sql
+       202610100009_supply_corrections_and_packaging.sql
 3. En Authentication > Users, crear el usuario de la administradora.
 4. Ejecutar en SQL Editor, reemplazando el correo:
 
@@ -43,6 +44,20 @@ planillas proporcionadas. Las cantidades se guardan en `recipe_items`, pero cada
 costo se obtiene siempre del último registro de `ingredient_prices`. Si falta el
 precio de un insumo, el panel no calcula ni permite publicar un precio sugerido
 incompleto.
+
+La migración `202610100009_supply_corrections_and_packaging.sql` actualiza los
+proveedores y precios corregidos, separa arándanos frescos y congelados, usa el
+congelado como opción predeterminada y agrega caja más base/tablita a las recetas
+que tienen esos importes en las planillas. Cuando una receta publicada no tiene
+un packaging respaldado por los archivos, agrega una fila “Packaging pendiente”
+sin precio: queda visible para completar y bloquea un sugerido incompleto.
+
+Después de ejecutarla, esta consulta permite auditar ingredientes, packaging y
+precios faltantes:
+
+       select *
+       from public.recipe_cost_completeness
+       order by is_complete, variant_id;
 
 Mientras las variables no estén configuradas, o si Supabase falla, la tienda
 continúa usando el catálogo local.
