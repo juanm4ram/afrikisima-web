@@ -19,7 +19,22 @@ const cakeSizes = (mediano: number, grande: number): ProductSize[] => [
   {
     id: "mediano",
     label: "Mediana",
-    detail: "18 cm · 10 a 12 porciones",
+    detail: "20 cm · 10 a 12 porciones",
+    price: mediano,
+  },
+  {
+    id: "grande",
+    label: "Grande",
+    detail: "24 cm · 18 a 20 porciones",
+    price: grande,
+  },
+];
+
+const tartSizes = (mediano: number, grande: number): ProductSize[] => [
+  {
+    id: "mediano",
+    label: "Mediana",
+    detail: "22 cm · 10 a 12 porciones",
     price: mediano,
   },
   {
@@ -111,7 +126,7 @@ export const products: Product[] = [
       "/products/tiramisu.webp",
       "/products/tiramisu-2.webp",
     ],
-    sizes: cakeSizes(33000, 50000),
+    sizes: tartSizes(33000, 50000),
   },
   {
     id: "carrot-cake",
@@ -130,7 +145,7 @@ export const products: Product[] = [
     categoryId: "clasicas",
     image: "/products/ricota.webp",
     gallery: ["/products/ricota.webp", "/products/ricota-2.webp"],
-    sizes: cakeSizes(28000, 42000),
+    sizes: tartSizes(28000, 42000),
   },
   {
     id: "cheesecake-ny",
@@ -140,7 +155,7 @@ export const products: Product[] = [
       "Base de galleta con manteca, relleno cremoso de queso horneado y cobertura de frutos rojos.",
     categoryId: "tartas",
     image: "/products/cheesecake-ny.webp",
-    sizes: cakeSizes(32000, 48000),
+    sizes: tartSizes(32000, 48000),
   },
   {
     id: "lemon-pie",
@@ -151,7 +166,7 @@ export const products: Product[] = [
     categoryId: "tartas",
     image: "/products/lemon-pie.webp",
     gallery: ["/products/lemon-pie.webp", "/products/lemon-pie-2.webp"],
-    sizes: cakeSizes(29000, 44000),
+    sizes: tartSizes(29000, 44000),
   },
   {
     id: "frutilla",
@@ -162,7 +177,7 @@ export const products: Product[] = [
     categoryId: "tartas",
     image: "/products/frutilla.webp",
     tags: ["De temporada"],
-    sizes: cakeSizes(35000, 54000),
+    sizes: tartSizes(35000, 54000),
   },
   {
     id: "cookies",

@@ -71,8 +71,14 @@ export async function GET() {
     { header: "Precio publicado/ofrecido", key: "published", width: 22, style: { numFmt: currencyFormat } },
     { header: "Sugerido antes de redondear", key: "unroundedSuggested", width: 24, style: { numFmt: currencyFormat } },
     { header: "Precio sugerido", key: "suggested", width: 18, style: { numFmt: currencyFormat } },
+    { header: "Tipo de ganancia personalizada", key: "customProfitType", width: 28 },
+    { header: "Valor de ganancia personalizada", key: "customProfitValue", width: 28, style: { numFmt: numberFormat } },
+    { header: "Ganancia personalizada", key: "customProfitAmount", width: 22, style: { numFmt: currencyFormat } },
+    { header: "Precio personalizado", key: "customPrice", width: 20, style: { numFmt: currencyFormat } },
+    { header: "Origen del precio publicado", key: "publishedSource", width: 24 },
     { header: "Costo por porción", key: "costPerServing", width: 18, style: { numFmt: currencyFormat } },
     { header: "Sugerido por porción", key: "suggestedPerServing", width: 20, style: { numFmt: currencyFormat } },
+    { header: "Personalizado por porción", key: "customPerServing", width: 24, style: { numFmt: currencyFormat } },
     { header: "Estado", key: "status", width: 14 },
     { header: "Notas", key: "notes", width: 35 },
   ];
@@ -93,8 +99,14 @@ export async function GET() {
       published: toNumber(product.published_price),
       unroundedSuggested: toNumber(product.unrounded_suggested_price),
       suggested: toNumber(product.suggested_price),
+      customProfitType: translateProfitType(product.custom_profit_type),
+      customProfitValue: toNumber(product.custom_profit_value),
+      customProfitAmount: toNumber(product.custom_profit_amount),
+      customPrice: toNumber(product.custom_price),
+      publishedSource: translatePublishedSource(product.published_price_source),
       costPerServing: toNumber(product.cost_per_serving),
       suggestedPerServing: toNumber(product.suggested_price_per_serving),
+      customPerServing: toNumber(product.custom_price_per_serving),
       status: "Publicado",
     });
   }
@@ -118,8 +130,13 @@ export async function GET() {
       published: toNumber(budget.quoted_price),
       unroundedSuggested: toNumber(budget.unrounded_suggested_price),
       suggested: toNumber(budget.suggested_price),
+      customProfitType: translateProfitType(budget.custom_profit_type),
+      customProfitValue: toNumber(budget.custom_profit_value),
+      customProfitAmount: toNumber(budget.custom_profit_amount),
+      customPrice: toNumber(budget.custom_price),
       costPerServing: toNumber(budget.cost_per_serving),
       suggestedPerServing: toNumber(budget.suggested_price_per_serving),
+      customPerServing: toNumber(budget.custom_price_per_serving),
       status: translateStatus(budget.status),
       notes: budget.notes,
     });
@@ -311,6 +328,19 @@ function translateStatus(status: unknown) {
     cancelled: "Cancelado",
   };
   return values[String(status)] ?? String(status ?? "");
+}
+
+function translateProfitType(type: unknown) {
+  return type === "amount" ? "Importe fijo" : "Porcentaje sobre costo";
+}
+
+function translatePublishedSource(source: unknown) {
+  const values: Record<string, string> = {
+    manual: "Manual/anterior",
+    suggested: "Sugerido",
+    custom: "Personalizado",
+  };
+  return values[String(source)] ?? String(source ?? "");
 }
 
 function translateSyncStatus(status: unknown) {

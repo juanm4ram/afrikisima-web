@@ -126,6 +126,16 @@ export async function publishSuggestedPrice(form: FormData) {
   revalidatePath("/");
 }
 
+export async function publishCustomPrice(form: FormData) {
+  const supabase = await adminClient();
+  const { error } = await supabase.rpc("publish_custom_price", {
+    target_variant_id: String(form.get("variant_id")),
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin");
+  revalidatePath("/");
+}
+
 export async function updateRecipeSettings(form: FormData) {
   const supabase = await adminClient();
   const { error } = await supabase.rpc("upsert_recipe_settings", {
@@ -134,6 +144,8 @@ export async function updateRecipeSettings(form: FormData) {
     new_servings: integerField(form, "servings"),
     new_target_margin_percent: numberField(form, "target_margin_percent"),
     new_rounding_increment: numberField(form, "rounding_increment"),
+    new_custom_profit_type: String(form.get("custom_profit_type") ?? "percent"),
+    new_custom_profit_value: numberField(form, "custom_profit_value"),
   });
   if (error) throw new Error(error.message);
   revalidatePath("/admin");
@@ -254,6 +266,8 @@ export async function updateCustomBudget(form: FormData) {
       servings: integerField(form, "servings"),
       target_margin_percent: numberField(form, "target_margin_percent"),
       rounding_increment: numberField(form, "rounding_increment"),
+      custom_profit_type: String(form.get("custom_profit_type") ?? "percent"),
+      custom_profit_value: numberField(form, "custom_profit_value"),
       status: String(form.get("status") ?? "draft"),
       notes: optionalTextField(form, "notes"),
       updated_at: new Date().toISOString(),
@@ -292,4 +306,31 @@ export async function setBudgetRecipeItem(form: FormData) {
   );
   if (error) throw new Error(error.message);
   revalidatePath("/admin/presupuestos");
+}
+
+export async function setVariantPublished(form: FormData) {
+  const supabase = await adminClient();
+  const variantId = String(form.get("variant_id") ?? "");
+  const publish = String(form.get("publish") ?? "") === "1";
+  if (!variantId) throw new Error("Falta la variante");
+
+  if (publish) {
+    const { data: variant, error: readError } = await supabase
+      .from("product_variants")
+      .select("published_price")
+      .eq("id", variantId)
+      .single();
+    if (readError) throw new Error(readError.message);
+    if (!(Number(variant?.published_price) > 0)) {
+      throw new Error("Elegí un precio (sugerido o personalizado) antes de mostrar este tamaño en la tienda");
+    }
+  }
+
+  const { error } = await supabase
+    .from("product_variants")
+    .update({ is_published: publish })
+    .eq("id", variantId);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin");
+  revalidatePath("/");
 }

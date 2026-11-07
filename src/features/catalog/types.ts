@@ -1,6 +1,6 @@
 /** Tipos del catálogo. */
 
-export type SizeId = "mediano" | "grande";
+export type SizeId = "chico" | "mediano" | "grande";
 
 export interface ProductSize {
   id: SizeId;

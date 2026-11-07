@@ -5,7 +5,8 @@
 --   * los precios informados manualmente se agregan al historial; no se borra nada;
 --   * solo se automatizan fichas exactas y estables de Carrefour;
 --   * arándanos frescos y congelados quedan como insumos distintos;
---   * limón/lima se costean como fruta comprada, no se cobra por separado el jugo
+--   * el jugo de lima/limón se costea con Limón comprado por unidad; no se cobra
+--     por separado el jugo
 --     y la ralladura de una misma fruta;
 --   * caja y base/tablita son recipe_items de tipo packaging, por lo que entran
 --     en la misma suma que el resto de los insumos.
@@ -27,10 +28,6 @@ values
   ),
   (
     'Limón', 'unit', 'ingredient', null, null, null, false,
-    'Compra manual en Verdulería Tiziana. El costo representa la fruta completa y evita cobrar dos veces jugo y ralladura.'
-  ),
-  (
-    'Lima', 'unit', 'ingredient', null, null, null, false,
     'Compra manual en Verdulería Tiziana. El costo representa la fruta completa y evita cobrar dos veces jugo y ralladura.'
   )
 on conflict (name) do update set
@@ -92,13 +89,12 @@ from (values
   ('Canela', 'Compra manual de 25 g en Verdulería Tiziana.'),
   ('Nueces', 'Compra manual de 250 g en Verdulería Tiziana.'),
   ('Nuez moscada', 'Compra manual de 25 g en Verdulería Tiziana.'),
-  ('Limón', 'Compra manual en Verdulería Tiziana. Precio informado para 6 unidades según la planilla de Lemon Pie.'),
-  ('Lima', 'Compra manual en Verdulería Tiziana. Precio informado para 10 unidades según la planilla de Key Lime Pie.')
+  ('Limón', 'Compra manual en Verdulería Tiziana. Precio informado para 6 unidades según la planilla de Lemon Pie.')
 ) as manual(name, source_notes)
 where i.name = manual.name;
 
 -- Los cuatro insumos derivados permanecen para no romper presupuestos históricos,
--- pero las recetas precargadas nuevas usan Limón/Lima como fruta completa.
+-- pero las recetas precargadas nuevas usan Limón como fruta completa.
 update public.ingredients
 set
   auto_update_enabled = false,
@@ -108,8 +104,8 @@ set
   source_notes = case name
     when 'Jugo de limón' then 'Insumo histórico. Para recetas nuevas usar Limón (unidad).'
     when 'Ralladura de limón' then 'Insumo histórico. Para recetas nuevas usar Limón (unidad).'
-    when 'Jugo de lima' then 'Insumo histórico. Para recetas nuevas usar Lima (unidad).'
-    when 'Ralladura de lima' then 'Insumo histórico. Para recetas nuevas usar Lima (unidad).'
+    when 'Jugo de lima' then 'Insumo histórico. Para recetas nuevas usar Limón (unidad).'
+    when 'Ralladura de lima' then 'Insumo histórico. Para recetas nuevas usar Limón (unidad).'
   end,
   updated_at = now()
 where name in ('Jugo de limón', 'Ralladura de limón', 'Jugo de lima', 'Ralladura de lima');
@@ -134,8 +130,7 @@ with price_updates as (
     ('Canela', 25::numeric, 1090::numeric, 'Verdulería Tiziana', null, 'g', 1::numeric, date '2026-10-10'),
     ('Nueces', 250::numeric, 5000::numeric, 'Verdulería Tiziana', null, 'g', 1::numeric, date '2026-10-10'),
     ('Nuez moscada', 25::numeric, 1000::numeric, 'Verdulería Tiziana', null, 'g', 1::numeric, date '2026-10-10'),
-    ('Limón', 6::numeric, 4400::numeric, 'Verdulería Tiziana', null, 'unit', 1::numeric, date '2026-10-10'),
-    ('Lima', 10::numeric, 4400::numeric, 'Verdulería Tiziana', null, 'unit', 1::numeric, date '2026-10-10')
+    ('Limón', 6::numeric, 4400::numeric, 'Verdulería Tiziana', null, 'unit', 1::numeric, date '2026-10-10')
   ) as supplied_price(
     name, package_quantity, package_price, supplier, brand,
     purchase_unit, conversion_to_base, recorded_at

@@ -36,7 +36,7 @@ function localResult(source: CatalogSource): CatalogResult {
 }
 
 function sizeId(value: string): SizeId {
-  if (value !== "mediano" && value !== "grande") {
+  if (value !== "chico" && value !== "mediano" && value !== "grande") {
     throw new Error("Tamaño de catálogo no reconocido: " + value);
   }
   return value;

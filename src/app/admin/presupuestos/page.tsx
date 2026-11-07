@@ -40,6 +40,11 @@ interface Budget {
   servings: number | string;
   cost_per_serving: number | string | null;
   suggested_price_per_serving: number | string | null;
+  custom_profit_type: "percent" | "amount";
+  custom_profit_value: number | string;
+  custom_profit_amount: number | string | null;
+  custom_price: number | string | null;
+  custom_price_per_serving: number | string | null;
   yield_quantity: number | string;
 }
 
@@ -165,6 +170,10 @@ export default async function BudgetsPage() {
                     value={budget.suggested_price === null ? "Pendiente" : formatPrice(Number(budget.suggested_price))}
                   />
                   <Summary
+                    label="Precio personalizado"
+                    value={budget.custom_price === null ? "Pendiente" : formatPrice(Number(budget.custom_price))}
+                  />
+                  <Summary
                     label="Resultado ofrecido"
                     value={budget.quoted_result === null ? "—" : formatPrice(Number(budget.quoted_result))}
                   />
@@ -196,6 +205,14 @@ export default async function BudgetsPage() {
                   <Field className="lg:col-span-2" label="Presentación" name="presentation" defaultValue={budget.presentation ?? ""} required={false} />
                   <Field label="Margen objetivo %" name="target_margin_percent" type="number" step="0.01" defaultValue={budget.target_margin_percent} />
                   <Field label="Redondeo ($)" name="rounding_increment" type="number" step="0.01" defaultValue={budget.rounding_increment} />
+                  <div className="space-y-2">
+                    <Label htmlFor={`profit-type-${budget.id}`}>Tipo de ganancia personalizada</Label>
+                    <select id={`profit-type-${budget.id}`} name="custom_profit_type" defaultValue={budget.custom_profit_type} className="h-9 w-full rounded-md border bg-transparent px-3 text-sm">
+                      <option value="percent">Porcentaje sobre costo</option>
+                      <option value="amount">Importe fijo ($)</option>
+                    </select>
+                  </div>
+                  <Field label="Ganancia personalizada" name="custom_profit_value" type="number" step="0.01" defaultValue={budget.custom_profit_value} />
                   <div className="space-y-2">
                     <Label htmlFor={`status-${budget.id}`}>Estado</Label>
                     <select id={`status-${budget.id}`} name="status" defaultValue={budget.status} className="h-9 w-full rounded-md border bg-transparent px-3 text-sm">

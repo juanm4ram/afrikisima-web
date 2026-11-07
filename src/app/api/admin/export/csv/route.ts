@@ -53,10 +53,16 @@ async function exportRecipes(supabase: Awaited<ReturnType<typeof createSupabaseS
     "Precio antes de redondear",
     "Redondeo",
     "Precio sugerido",
+    "Tipo de ganancia personalizada",
+    "Valor de ganancia personalizada",
+    "Ganancia personalizada",
+    "Precio personalizado",
     "Precio publicado",
+    "Origen del precio publicado",
     "Porciones",
     "Costo por porción",
     "Sugerido por porción",
+    "Personalizado por porción",
     "Notas de la receta",
   ]];
 
@@ -86,10 +92,20 @@ async function exportRecipes(supabase: Awaited<ReturnType<typeof createSupabaseS
         product.unrounded_suggested_price,
         product.rounding_increment,
         product.suggested_price,
+        product.custom_profit_type === "amount" ? "Importe fijo" : "Porcentaje sobre costo",
+        product.custom_profit_value,
+        product.custom_profit_amount,
+        product.custom_price,
         product.published_price,
+        product.published_price_source === "custom"
+          ? "Personalizado"
+          : product.published_price_source === "suggested"
+            ? "Sugerido"
+            : "Manual/anterior",
         product.servings,
         product.cost_per_serving,
         product.suggested_price_per_serving,
+        product.custom_price_per_serving,
         product.notes,
       ]);
     }
